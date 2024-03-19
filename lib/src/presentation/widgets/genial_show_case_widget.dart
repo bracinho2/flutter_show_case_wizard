@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
 
 import 'package:showcaseview/showcaseview.dart';
-
-enum GenialShowCaseToolTipDirection {
-  topLeft,
-  topRight,
-  bottomLeft,
-  bottomRight,
-}
 
 class GenialShowCaseWidget extends StatelessWidget {
   const GenialShowCaseWidget({

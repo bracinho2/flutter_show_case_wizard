@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
+import 'package:flutter_show_case_wizard/src/presentation/widgets/genial_show_case_widget.dart';
 
 import 'package:showcaseview/showcaseview.dart';
-
-import 'package:flutter_show_case_wizard/genial_show_case_widget.dart';
 
 import 'src/presentation/widgets/genial_show_case_indicator_widget.dart';
 import 'src/presentation/widgets/genial_show_case_main_widget.dart';
