@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
 import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
 import 'package:flutter_show_case_wizard/src/presentation/view/genial_show_case_view_model.dart';
 
@@ -66,7 +67,8 @@ class GenialShowCaseToPresentWidget extends StatelessWidget {
                 leftClick: leftClick,
                 rightClick: rightClick,
               ),
-        overlayOpacity: .3,
+        overlayColor: GenialShowCaseColors.overlay.color,
+        overlayOpacity: .82,
         key: childKey,
         height: heightFromWidget,
         width: widthFromWidget,
@@ -162,7 +164,7 @@ class LegendToolTipoWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.blueAccent,
+        color: GenialShowCaseColors.toolTip.color,
         borderRadius: getBorderRadius(
           direction: direction,
           toolTipBorderRadius: toolTipBorderRadius,
@@ -170,6 +172,9 @@ class LegendToolTipoWidget extends StatelessWidget {
       ),
       child: Text(
         toolTipMessage,
+        style: TextStyle(
+          color: GenialShowCaseColors.toolTipText.color,
+        ),
       ),
     );
   }

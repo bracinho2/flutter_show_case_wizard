@@ -56,6 +56,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         heightFromWidget: 0,
         widthFromWidget: 185,
         childKey: _two,
+        flags: showCaseList.length,
         toolTipMessage: 'Minha Mensagem',
         direction: GenialShowCaseToolTipDirection.topRight,
         leftClick: () => previusWidget(),

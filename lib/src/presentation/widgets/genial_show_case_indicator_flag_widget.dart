@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
 import 'package:flutter_show_case_wizard/src/presentation/view/genial_indicator_view_model.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -112,9 +113,12 @@ class _GenialShowCaseIndicatorFlagWidgetState
                           borderRadius: BorderRadius.circular(10),
                           child: LinearProgressIndicator(
                             value: _animationControllers[index].value,
-                            backgroundColor: Colors.amber,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.blue),
+                            backgroundColor: GenialShowCaseColors
+                                .backIndicator.color
+                                .withOpacity(.2),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              GenialShowCaseColors.frontIndicator.color,
+                            ),
                           ),
                         ),
                       ),
@@ -131,14 +135,14 @@ class _GenialShowCaseIndicatorFlagWidgetState
                     onTap: _leftClick,
                     child: Container(
                       width: 50,
-                      color: Colors.amber,
+                      color: GenialShowCaseColors.transparent.color,
                     ),
                   ),
                   GestureDetector(
                     onTap: _rightClick,
                     child: Container(
                       width: 50,
-                      color: Colors.green,
+                      color: GenialShowCaseColors.transparent.color,
                     ),
                   ),
                 ],
