@@ -18,6 +18,8 @@ dependencies:
       ref: master
    
   cupertino_icons: ^1.0.6
+  flutter_modular: 5.0.3
+  flutter_bloc: ^8.1.4
 
 dev_dependencies:
   flutter_test:

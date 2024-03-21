@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
+import 'package:flutter_show_case_wizard/src/presentation/view/genial_show_case_view_model.dart';
 
 import 'package:showcaseview/showcaseview.dart';
 
-class GenialShowCaseWidget extends StatelessWidget {
-  const GenialShowCaseWidget({
+import '../enum/genial_show_case_page_location.dart';
+import 'genial_show_case_indicator_flag_widget.dart';
+
+class GenialShowCaseToPresentWidget extends StatelessWidget {
+  const GenialShowCaseToPresentWidget({
     super.key,
     required this.heightFromWidget,
     required this.widthFromWidget,
@@ -14,7 +19,9 @@ class GenialShowCaseWidget extends StatelessWidget {
     this.movingAnimationDuration = Duration.zero,
     required this.direction,
     this.toolTipBorderRadius = const Radius.circular(10),
-    this.topPageShowCaseIndicator,
+    this.flags = 0,
+    this.leftClick,
+    this.rightClick,
   });
 
   final double heightFromWidget;
@@ -25,10 +32,14 @@ class GenialShowCaseWidget extends StatelessWidget {
   final Duration movingAnimationDuration;
   final GenialShowCaseToolTipDirection direction;
   final Radius toolTipBorderRadius;
-  final Widget? topPageShowCaseIndicator;
+  final int flags;
+  final void Function()? leftClick;
+  final void Function()? rightClick;
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Modular.get<GenialShowCaseViewModel>();
+
     TooltipPosition getPosition({
       required GenialShowCaseToolTipDirection position,
     }) {
@@ -41,24 +52,37 @@ class GenialShowCaseWidget extends StatelessWidget {
       return result;
     }
 
-    return Showcase.withWidget(
-      topPageShowCaseIndicator: topPageShowCaseIndicator,
-      overlayOpacity: .3,
-      key: childKey,
-      height: heightFromWidget,
-      width: widthFromWidget,
-      container: LegendToolTipoWidget.build(
-        toolTipMessage: toolTipMessage,
-        direction: direction,
-        toolTipBorderRadius: toolTipBorderRadius,
+    return Visibility(
+      replacement: child,
+      visible: viewModel.startShowCase(
+        location: GenialShowCasePageLocation.mainPage,
       ),
-      targetPadding: const EdgeInsets.all(10),
-      targetShapeBorder: const CircleBorder(),
-      movingAnimationDuration: movingAnimationDuration,
-      tooltipPosition: getPosition(
-        position: direction,
+      child: Showcase.withWidget(
+        topPageShowCaseIndicator: flags == 0
+            ? null
+            : GenialShowCaseIndicatorFlagWidget(
+                flags: flags,
+                duration: 2,
+                leftClick: leftClick,
+                rightClick: rightClick,
+              ),
+        overlayOpacity: .3,
+        key: childKey,
+        height: heightFromWidget,
+        width: widthFromWidget,
+        container: LegendToolTipoWidget.build(
+          toolTipMessage: toolTipMessage,
+          direction: direction,
+          toolTipBorderRadius: toolTipBorderRadius,
+        ),
+        targetPadding: const EdgeInsets.all(10),
+        targetShapeBorder: const CircleBorder(),
+        movingAnimationDuration: movingAnimationDuration,
+        tooltipPosition: getPosition(
+          position: direction,
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 }
