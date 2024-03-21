@@ -9,7 +9,12 @@ import 'package:showcaseview/showcaseview.dart';
 import '../enum/genial_show_case_page_location.dart';
 import 'genial_show_case_indicator_flag_widget.dart';
 
+/// This widget display the Showcase in your child widget.
+/// It's necessary configure the local cache to know it's the first
+/// time to show all show cases and after disable it.
+
 class GenialShowCaseToPresentWidget extends StatelessWidget {
+  /// Constructor of [GenialShowCaseToPresentWidget]
   const GenialShowCaseToPresentWidget({
     super.key,
     required this.heightFromWidget,
@@ -77,7 +82,7 @@ class GenialShowCaseToPresentWidget extends StatelessWidget {
           direction: direction,
           toolTipBorderRadius: toolTipBorderRadius,
         ),
-        targetPadding: const EdgeInsets.all(10),
+        targetPadding: const EdgeInsets.all(12),
         targetShapeBorder: const CircleBorder(),
         movingAnimationDuration: movingAnimationDuration,
         tooltipPosition: getPosition(

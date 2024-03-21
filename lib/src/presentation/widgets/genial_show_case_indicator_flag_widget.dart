@@ -5,7 +5,9 @@ import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colo
 import 'package:flutter_show_case_wizard/src/presentation/view/genial_indicator_view_model.dart';
 import 'package:showcaseview/showcaseview.dart';
 
+/// Creates the flatgs to Show Case indicator.
 class GenialShowCaseIndicatorFlagWidget extends StatefulWidget {
+  /// Contructor of [GenialShowCaseIndicatorFlagWidget];
   const GenialShowCaseIndicatorFlagWidget({
     super.key,
     required this.flags,
@@ -14,9 +16,18 @@ class GenialShowCaseIndicatorFlagWidget extends StatefulWidget {
     this.rightClick,
   });
 
+  /// The flag number creates the indicators of total Show Cases Indicators.
   final int flags;
+
+  /// The duration of transition it's set by them call it.
   final int duration;
+
+  /// It is possible to insert an action into left click of the screen when the
+  /// flags are displayed to move forward or backward.
   final void Function()? leftClick;
+
+  /// It is possible to insert an action into right click of the screen when the
+  /// flags are displayed to move forward or backward.
   final void Function()? rightClick;
 
   @override
