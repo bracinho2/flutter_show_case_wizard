@@ -3,12 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
 import 'package:flutter_show_case_wizard/src/presentation/view/genial_indicator_view_model.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 /// Creates the flatgs to Show Case indicator.
-class GenialShowCaseIndicatorFlagWidget extends StatefulWidget {
-  /// Contructor of [GenialShowCaseIndicatorFlagWidget];
-  const GenialShowCaseIndicatorFlagWidget({
+class GenialShowCaseIndicator extends StatefulWidget {
+  /// Contructor of [GenialShowCaseIndicator];
+  const GenialShowCaseIndicator({
     super.key,
     required this.flags,
     required this.duration,
@@ -31,12 +30,11 @@ class GenialShowCaseIndicatorFlagWidget extends StatefulWidget {
   final void Function()? rightClick;
 
   @override
-  State<GenialShowCaseIndicatorFlagWidget> createState() =>
-      _GenialShowCaseIndicatorFlagWidgetState();
+  State<GenialShowCaseIndicator> createState() =>
+      _GenialShowCaseIndicatorState();
 }
 
-class _GenialShowCaseIndicatorFlagWidgetState
-    extends State<GenialShowCaseIndicatorFlagWidget>
+class _GenialShowCaseIndicatorState extends State<GenialShowCaseIndicator>
     with TickerProviderStateMixin {
   final cubit = Modular.get<GenialIndicatorViewModel>();
 
@@ -83,14 +81,6 @@ class _GenialShowCaseIndicatorFlagWidgetState
     }
 
     _startAnimation();
-  }
-
-  void nextPage() {
-    ShowCaseWidget.of(context).next();
-  }
-
-  void previusPage() {
-    ShowCaseWidget.of(context).previous();
   }
 
   @override

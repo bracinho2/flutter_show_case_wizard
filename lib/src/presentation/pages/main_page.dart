@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../enum/genial_show_case_tooltip_direction.dart';
-import '../widgets/genial_show_case_tooltip_to_present_widget.dart';
+import '../widgets/genial_show_case.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({
@@ -43,7 +43,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: GenialShowCaseToPresentWidget(
+      body: GenialShowCase(
         heightFromWidget: 50,
         widthFromWidget: 0,
         childKey: _one,
@@ -52,7 +52,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         flags: showCaseList.length,
         child: const Text('Meu Texto'),
       ),
-      floatingActionButton: GenialShowCaseToPresentWidget(
+      floatingActionButton: GenialShowCase(
         heightFromWidget: 0,
         widthFromWidget: 185,
         childKey: _two,

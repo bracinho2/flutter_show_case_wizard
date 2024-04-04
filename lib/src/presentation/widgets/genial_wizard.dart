@@ -9,9 +9,9 @@ import 'package:showcaseview/showcaseview.dart';
 ///
 /// Because the ShowCase Package requires a context, we need call it just below
 /// the MaterialApp in a higher position in the widget tree;
-class GenialShowCaseMainBelowMaterialAppWidget extends StatefulWidget {
-  ///Constructor of [GenialShowCaseMainBelowMaterialAppWidget]
-  const GenialShowCaseMainBelowMaterialAppWidget({
+class GenialWizard extends StatefulWidget {
+  ///Constructor of [GenialWizard]
+  const GenialWizard({
     super.key,
     required this.child,
   });
@@ -22,12 +22,10 @@ class GenialShowCaseMainBelowMaterialAppWidget extends StatefulWidget {
   final Widget child;
 
   @override
-  State<GenialShowCaseMainBelowMaterialAppWidget> createState() =>
-      _GenialShowCaseMainBelowMaterialAppWidgetState();
+  State<GenialWizard> createState() => _GenialWizardState();
 }
 
-class _GenialShowCaseMainBelowMaterialAppWidgetState
-    extends State<GenialShowCaseMainBelowMaterialAppWidget> {
+class _GenialWizardState extends State<GenialWizard> {
   Widget get _child => widget.child;
   GenialIndicatorViewModel get _indicatorViewModel =>
       Modular.get<GenialIndicatorViewModel>();
@@ -47,12 +45,12 @@ class _GenialShowCaseMainBelowMaterialAppWidgetState
             _indicatorViewModel.showWidget(index!);
           }
         },
-        onComplete: (index, key) {
+        onComplete: (index, key) {},
+        autoPlayDelay: const Duration(seconds: 2),
+        onFinish: () {
           _viewModel.stopShowCase(
               location: GenialShowCasePageLocation.mainPage);
         },
-        autoPlayDelay: const Duration(seconds: 2),
-        onFinish: () {},
         blurValue: 0,
         builder: Builder(
           builder: (context) => _child,

@@ -3,19 +3,19 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
 import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
 import 'package:flutter_show_case_wizard/src/presentation/view/genial_show_case_view_model.dart';
+import 'package:flutter_show_case_wizard/src/presentation/widgets/genial_show_case_indicator.dart';
 
 import 'package:showcaseview/showcaseview.dart';
 
 import '../enum/genial_show_case_page_location.dart';
-import 'genial_show_case_indicator_flag_widget.dart';
 
 /// This widget display the Showcase in your child widget.
 /// It's necessary configure the local cache to know it's the first
 /// time to show all show cases and after disable it.
 
-class GenialShowCaseToPresentWidget extends StatelessWidget {
-  /// Constructor of [GenialShowCaseToPresentWidget]
-  const GenialShowCaseToPresentWidget({
+class GenialShowCase extends StatefulWidget {
+  /// Constructor of [GenialShowCase]
+  const GenialShowCase({
     super.key,
     required this.heightFromWidget,
     required this.widthFromWidget,
@@ -43,52 +43,97 @@ class GenialShowCaseToPresentWidget extends StatelessWidget {
   final void Function()? rightClick;
 
   @override
+  State<GenialShowCase> createState() => _GenialShowCaseState();
+}
+
+class _GenialShowCaseState extends State<GenialShowCase> {
+  final _viewModel = Modular.get<GenialShowCaseViewModel>();
+
+  OverlayEntry? indicator;
+
+  void showIndicator() async {
+    indicator = OverlayEntry(
+      builder: (context) {
+        return Positioned(
+          top: 0,
+          left: 2,
+          child: Material(
+            color: Colors.transparent,
+            child: SizedBox(
+                height: 30,
+                width: MediaQuery.of(context).size.width,
+                child: GenialShowCaseIndicator(
+                  flags: widget.flags,
+                  duration: 2,
+                  leftClick: widget.leftClick,
+                  rightClick: widget.rightClick,
+                )),
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 1));
+    Overlay.of(context).insert(indicator!);
+  }
+
+  void hideIndicator() {
+    indicator?.remove();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(seconds: 1));
+      showIndicator();
+    });
+  }
+
+  TooltipPosition getPosition({
+    required GenialShowCaseToolTipDirection position,
+  }) {
+    final result = switch (position) {
+      GenialShowCaseToolTipDirection.topLeft => TooltipPosition.top,
+      GenialShowCaseToolTipDirection.topRight => TooltipPosition.top,
+      GenialShowCaseToolTipDirection.bottomLeft => TooltipPosition.bottom,
+      GenialShowCaseToolTipDirection.bottomRight => TooltipPosition.bottom,
+    };
+    return result;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final viewModel = Modular.get<GenialShowCaseViewModel>();
-
-    TooltipPosition getPosition({
-      required GenialShowCaseToolTipDirection position,
-    }) {
-      final result = switch (position) {
-        GenialShowCaseToolTipDirection.topLeft => TooltipPosition.top,
-        GenialShowCaseToolTipDirection.topRight => TooltipPosition.top,
-        GenialShowCaseToolTipDirection.bottomLeft => TooltipPosition.bottom,
-        GenialShowCaseToolTipDirection.bottomRight => TooltipPosition.bottom,
-      };
-      return result;
-    }
-
     return Visibility(
-      replacement: child,
-      visible: viewModel.startShowCase(
+      replacement: widget.child,
+      visible: _viewModel.startShowCase(
         location: GenialShowCasePageLocation.mainPage,
       ),
       child: Showcase.withWidget(
-        topPageShowCaseIndicator: flags == 0
-            ? null
-            : GenialShowCaseIndicatorFlagWidget(
-                flags: flags,
-                duration: 2,
-                leftClick: leftClick,
-                rightClick: rightClick,
-              ),
+        // topPageShowCaseIndicator: flags == 0
+        //     ? null
+        //     : GenialShowCaseIndicator(
+        //         flags: flags,
+        //         duration: 2,
+        //         leftClick: leftClick,
+        //         rightClick: rightClick,
+        //       ),
         overlayColor: GenialShowCaseColors.overlay.color,
         overlayOpacity: .82,
-        key: childKey,
-        height: heightFromWidget,
-        width: widthFromWidget,
+        key: widget.childKey,
+        height: widget.heightFromWidget,
+        width: widget.widthFromWidget,
         container: LegendToolTipoWidget.build(
-          toolTipMessage: toolTipMessage,
-          direction: direction,
-          toolTipBorderRadius: toolTipBorderRadius,
+          toolTipMessage: widget.toolTipMessage,
+          direction: widget.direction,
+          toolTipBorderRadius: widget.toolTipBorderRadius,
         ),
         targetPadding: const EdgeInsets.all(12),
         targetShapeBorder: const CircleBorder(),
-        movingAnimationDuration: movingAnimationDuration,
+        movingAnimationDuration: widget.movingAnimationDuration,
         tooltipPosition: getPosition(
-          position: direction,
+          position: widget.direction,
         ),
-        child: child,
+        child: widget.child,
       ),
     );
   }
