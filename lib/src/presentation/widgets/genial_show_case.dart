@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
 import 'package:flutter_show_case_wizard/src/presentation/enum/genial_show_case_tooltip_direction.dart';
-import 'package:flutter_show_case_wizard/src/presentation/view/genial_show_case_view_model.dart';
-import 'package:flutter_show_case_wizard/src/presentation/widgets/genial_show_case_indicator.dart';
-
 import 'package:showcaseview/showcaseview.dart';
-
-import '../enum/genial_show_case_page_location.dart';
 
 /// This widget display the Showcase in your child widget.
 /// It's necessary configure the local cache to know it's the first
@@ -25,9 +19,6 @@ class GenialShowCase extends StatefulWidget {
     this.movingAnimationDuration = Duration.zero,
     required this.direction,
     this.toolTipBorderRadius = const Radius.circular(10),
-    this.flags = 0,
-    this.leftClick,
-    this.rightClick,
   });
 
   final double heightFromWidget;
@@ -38,55 +29,23 @@ class GenialShowCase extends StatefulWidget {
   final Duration movingAnimationDuration;
   final GenialShowCaseToolTipDirection direction;
   final Radius toolTipBorderRadius;
-  final int flags;
-  final void Function()? leftClick;
-  final void Function()? rightClick;
 
   @override
   State<GenialShowCase> createState() => _GenialShowCaseState();
 }
 
 class _GenialShowCaseState extends State<GenialShowCase> {
-  final _viewModel = Modular.get<GenialShowCaseViewModel>();
+  int flags = 0;
+  int activeShowCase = 0;
+  Duration autoPlayDelay = const Duration(milliseconds: 0);
 
-  OverlayEntry? indicator;
-
-  void showIndicator() async {
-    indicator = OverlayEntry(
-      builder: (context) {
-        return Positioned(
-          top: 0,
-          left: 2,
-          child: Material(
-            color: Colors.transparent,
-            child: SizedBox(
-                height: 30,
-                width: MediaQuery.of(context).size.width,
-                child: GenialShowCaseIndicator(
-                  flags: widget.flags,
-                  duration: 2,
-                  leftClick: widget.leftClick,
-                  rightClick: widget.rightClick,
-                )),
-          ),
-        );
-      },
-    );
-    Future.delayed(const Duration(seconds: 1));
-    Overlay.of(context).insert(indicator!);
-  }
-
-  void hideIndicator() {
-    indicator?.remove();
+  void setInicialShowCase() {
+    activeShowCase = ShowCaseWidget.of(context).activeWidgetId!;
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(const Duration(seconds: 1));
-      showIndicator();
-    });
   }
 
   TooltipPosition getPosition({
@@ -105,23 +64,14 @@ class _GenialShowCaseState extends State<GenialShowCase> {
   Widget build(BuildContext context) {
     return Visibility(
       replacement: widget.child,
-      visible: _viewModel.startShowCase(
-        location: GenialShowCasePageLocation.mainPage,
-      ),
+      visible: true,
       child: Showcase.withWidget(
-        // topPageShowCaseIndicator: flags == 0
-        //     ? null
-        //     : GenialShowCaseIndicator(
-        //         flags: flags,
-        //         duration: 2,
-        //         leftClick: leftClick,
-        //         rightClick: rightClick,
-        //       ),
         overlayColor: GenialShowCaseColors.overlay.color,
         overlayOpacity: .82,
         key: widget.childKey,
         height: widget.heightFromWidget,
         width: widget.widthFromWidget,
+        targetBorderRadius: BorderRadius.circular(100),
         container: LegendToolTipoWidget.build(
           toolTipMessage: widget.toolTipMessage,
           direction: widget.direction,

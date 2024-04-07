@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_show_case_wizard/src/presentation/pages/main_page.dart';
-import 'package:flutter_show_case_wizard/src/presentation/view/genial_indicator_view_model.dart';
-
 import 'src/presentation/widgets/genial_wizard.dart';
 
 class AppWidget extends StatelessWidget {
@@ -12,6 +9,11 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<GlobalKey> showCaseGlobalKeys = [
+      GlobalKey(),
+      GlobalKey(),
+    ];
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Genial Show Case',
@@ -21,11 +23,10 @@ class AppWidget extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (_) => GenialIndicatorViewModel(),
-        child: const GenialWizard(
-          child: MainPage(),
-        ),
+      home: GenialWizard(
+        keys: showCaseGlobalKeys,
+        autoPlay: true,
+        child: const MainPage(),
       ),
     );
   }

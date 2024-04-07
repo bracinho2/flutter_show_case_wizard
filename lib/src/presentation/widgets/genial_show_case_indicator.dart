@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+
 import 'package:flutter_show_case_wizard/src/consts/colors/genial_show_case_colors.dart';
-import 'package:flutter_show_case_wizard/src/presentation/view/genial_indicator_view_model.dart';
+
+import 'genial_show_case_provider.dart';
 
 /// Creates the flatgs to Show Case indicator.
 class GenialShowCaseIndicator extends StatefulWidget {
   /// Contructor of [GenialShowCaseIndicator];
   const GenialShowCaseIndicator({
     super.key,
-    required this.flags,
-    required this.duration,
     this.leftClick,
     this.rightClick,
   });
-
-  /// The flag number creates the indicators of total Show Cases Indicators.
-  final int flags;
-
-  /// The duration of transition it's set by them call it.
-  final int duration;
 
   /// It is possible to insert an action into left click of the screen when the
   /// flags are displayed to move forward or backward.
@@ -36,51 +28,40 @@ class GenialShowCaseIndicator extends StatefulWidget {
 
 class _GenialShowCaseIndicatorState extends State<GenialShowCaseIndicator>
     with TickerProviderStateMixin {
-  final cubit = Modular.get<GenialIndicatorViewModel>();
-
-  int get _flags => widget.flags;
-  int get _duration => widget.duration;
+  int activeShowCase = 0;
+  int oldShowcase = 0;
+  int flags = 0;
+  Duration autoPlayDelay = const Duration(milliseconds: 0);
 
   Function()? get _leftClick => widget.leftClick;
   Function()? get _rightClick => widget.rightClick;
 
   final _animationControllers = [];
-  int _currentPageIndex = 0;
 
-  void _startAnimation() {
-    _animationControllers[_currentPageIndex].stop();
-    _animationControllers[_currentPageIndex].reset();
-    _animationControllers[_currentPageIndex].forward();
+  void onPageChanged() {
+    if (oldShowcase == activeShowCase || oldShowcase != activeShowCase) {
+      stopAndResetAnimation(oldShowcase);
+      startAnimation(activeShowCase);
+      oldShowcase = activeShowCase;
+    }
+  }
+
+  void stopAndResetAnimation(int index) {
+    if (index >= 0 && index < _animationControllers.length) {
+      _animationControllers[index].stop();
+      _animationControllers[index].reset();
+    }
+  }
+
+  void startAnimation(int index) {
+    if (index >= 0 && index < _animationControllers.length) {
+      _animationControllers[index].forward();
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = cubit.state;
-
-    for (int i = 0; i < _flags; i++) {
-      _animationControllers.add(
-        AnimationController(
-          vsync: this,
-          duration: Duration(seconds: _duration),
-        ),
-      );
-    }
-    _startAnimation();
-  }
-
-  void _listener(
-    BuildContext context,
-    int index,
-  ) {
-    if (index > _currentPageIndex) {
-      _animationControllers[_currentPageIndex].value = _duration.toDouble();
-    } else {
-      _animationControllers[_currentPageIndex].stop();
-      _animationControllers[_currentPageIndex].reset();
-    }
-
-    _startAnimation();
   }
 
   @override
@@ -93,34 +74,49 @@ class _GenialShowCaseIndicatorState extends State<GenialShowCaseIndicator>
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GenialIndicatorViewModel, int>(
-      bloc: cubit,
-      listener: _listener,
-      builder: (context, state) {
-        return Column(
-          children: [
-            SizedBox(
-              height: 24,
-              child: Row(
-                children: List.generate(
-                  _flags,
-                  (index) => AnimatedBuilder(
-                    animation: _animationControllers[index],
-                    builder: (context, child) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 2, vertical: 2),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: LinearProgressIndicator(
-                            value: _animationControllers[index].value,
-                            backgroundColor: GenialShowCaseColors
-                                .backIndicator.color
-                                .withOpacity(.2),
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              GenialShowCaseColors.frontIndicator.color,
-                            ),
-                          ),
+    final mediaQueryData = MediaQuery.of(context).size;
+
+    final genialShowCaseNotifier = GenialShowCaseProvider.watch(context);
+
+    activeShowCase = genialShowCaseNotifier.activeShowCase;
+    flags = genialShowCaseNotifier.keys.length;
+    autoPlayDelay = Duration(
+        milliseconds:
+            genialShowCaseNotifier.autoPlayDelay.inMilliseconds - 1000);
+
+    for (int i = 0; i < flags; i++) {
+      _animationControllers.add(
+        AnimationController(
+          vsync: this,
+          duration: autoPlayDelay,
+        ),
+      );
+    }
+
+    onPageChanged();
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 24,
+          child: Row(
+            children: List.generate(
+              flags,
+              (index) => AnimatedBuilder(
+                animation: _animationControllers[index],
+                builder: (context, child) => Expanded(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: _animationControllers[index].value,
+                        backgroundColor: GenialShowCaseColors
+                            .backIndicator.color
+                            .withOpacity(.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          GenialShowCaseColors.frontIndicator.color,
                         ),
                       ),
                     ),
@@ -128,30 +124,32 @@ class _GenialShowCaseIndicatorState extends State<GenialShowCaseIndicator>
                 ),
               ),
             ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: _leftClick,
-                    child: Container(
-                      width: 50,
-                      color: GenialShowCaseColors.transparent.color,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: _rightClick,
-                    child: Container(
-                      width: 50,
-                      color: GenialShowCaseColors.transparent.color,
-                    ),
-                  ),
-                ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: _leftClick,
+                onLongPress: () {},
+                child: Container(
+                  width: mediaQueryData.width / 2,
+                  color: GenialShowCaseColors.transparent.color,
+                ),
               ),
-            )
-          ],
-        );
-      },
+              GestureDetector(
+                onTap: _rightClick,
+                onLongPress: () {},
+                child: Container(
+                  width: mediaQueryData.width / 2,
+                  color: GenialShowCaseColors.transparent.color,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

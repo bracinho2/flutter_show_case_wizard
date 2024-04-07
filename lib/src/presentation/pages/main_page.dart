@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../enum/genial_show_case_tooltip_direction.dart';
 import '../widgets/genial_show_case.dart';
+import '../widgets/genial_show_case_indicator.dart';
+import '../widgets/genial_show_case_provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({
@@ -13,54 +15,110 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
-  final GlobalKey _one = GlobalKey();
-  final GlobalKey _two = GlobalKey();
-
   List<GlobalKey> showCaseList = [];
+
+  int flags = 0;
+  Duration autoPlayDelay = const Duration(milliseconds: 0);
+  int activeShowCase = 0;
+
+  List<GlobalKey> keys = [];
 
   @override
   void initState() {
     super.initState();
-    showCaseList = [_one, _two];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ShowCaseWidget.of(context).startShowCase([
-        _one,
-        _two,
-      ]);
+      ShowCaseWidget.of(context).startShowCase(showCaseList);
+      Future.delayed(
+        const Duration(
+          seconds: 1,
+        ),
+        () {
+          showIndicator();
+        },
+      );
     });
   }
 
-  void nextWidget() {
-    ShowCaseWidget.of(context).next();
+  void nextShowCase() {
+    final activeShowCase = ShowCaseWidget.of(context).activeWidgetId!;
+    if (activeShowCase < flags - 1) {
+      ShowCaseWidget.of(context).next();
+    }
   }
 
-  void previusWidget() {
-    ShowCaseWidget.of(context).previous();
+  void previousShowCase() {
+    final activeShowCase = ShowCaseWidget.of(context).activeWidgetId;
+    if (activeShowCase != null) {
+      ShowCaseWidget.of(context).previous();
+    }
+  }
+
+  OverlayEntry? indicator;
+
+  void showIndicator() {
+    hideIndicator();
+
+    final genialShowCaseNotifier = GenialShowCaseProvider.show(context);
+
+    indicator = OverlayEntry(
+      builder: (context) {
+        return GenialShowCaseProvider(
+            notifier: genialShowCaseNotifier,
+            child: Positioned(
+              top: 0,
+              left: 2,
+              child: Material(
+                color: Colors.transparent,
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: GenialShowCaseIndicator(
+                    key: ValueKey(activeShowCase),
+                    leftClick: previousShowCase,
+                    rightClick: nextShowCase,
+                  ),
+                ),
+              ),
+            ));
+      },
+    );
+
+    Overlay.of(context).insert(indicator!);
+  }
+
+  void hideIndicator() {
+    indicator?.remove();
+    indicator?.dispose();
+    indicator = null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = GenialShowCaseProvider.show(context);
+
+    flags = provider.keys.length;
+    autoPlayDelay = provider.autoPlayDelay;
+    activeShowCase = provider.activeShowCase;
+    keys = provider.keys;
+
+    showCaseList = provider.keys;
     return Scaffold(
       appBar: AppBar(),
       body: GenialShowCase(
         heightFromWidget: 50,
         widthFromWidget: 0,
-        childKey: _one,
+        childKey: showCaseList[0],
         toolTipMessage: 'Minha Mensagem',
         direction: GenialShowCaseToolTipDirection.bottomLeft,
-        flags: showCaseList.length,
         child: const Text('Meu Texto'),
       ),
       floatingActionButton: GenialShowCase(
         heightFromWidget: 0,
         widthFromWidget: 185,
-        childKey: _two,
-        flags: showCaseList.length,
+        childKey: showCaseList[1],
         toolTipMessage: 'Minha Mensagem',
         direction: GenialShowCaseToolTipDirection.topRight,
-        leftClick: () => previusWidget(),
-        rightClick: () => nextWidget(),
         child: FloatingActionButton(onPressed: () {}),
       ),
     );
