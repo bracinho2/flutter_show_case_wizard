@@ -36,7 +36,7 @@ class GenialShowCaseNotifier extends ChangeNotifier {
   }
 
   void setKeys(List<GlobalKey> values) {
-    keys = keys;
+    keys = values;
     notifyListeners();
   }
 

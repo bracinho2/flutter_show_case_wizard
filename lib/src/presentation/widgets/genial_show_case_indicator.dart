@@ -82,7 +82,9 @@ class _GenialShowCaseIndicatorState extends State<GenialShowCaseIndicator>
     flags = genialShowCaseNotifier.keys.length;
     autoPlayDelay = Duration(
         milliseconds:
-            genialShowCaseNotifier.autoPlayDelay.inMilliseconds - 1000);
+            genialShowCaseNotifier.autoPlayDelay
+            
+            .inMilliseconds - 1000);
 
     for (int i = 0; i < flags; i++) {
       _animationControllers.add(

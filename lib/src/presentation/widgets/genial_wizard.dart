@@ -41,6 +41,7 @@ class _GenialWizardState extends State<GenialWizard> {
   @override
   Widget build(BuildContext context) {
     final genialShowCaseNotifier = GenialShowCaseNotifier(
+      
       keys: widget.keys,
       activeShowCase: 0,
       autoPlayDelay: widget.autoPlayDelay,
