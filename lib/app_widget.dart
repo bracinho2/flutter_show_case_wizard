@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_show_case_wizard/src/genial_show_case_keys.dart';
 import 'package:flutter_show_case_wizard/src/presentation/pages/main_page.dart';
 import 'src/presentation/widgets/genial_wizard.dart';
 
@@ -9,11 +10,6 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<GlobalKey> showCaseGlobalKeys = [
-      GlobalKey(),
-      GlobalKey(),
-    ];
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Genial Show Case',
@@ -24,8 +20,9 @@ class AppWidget extends StatelessWidget {
         useMaterial3: true,
       ),
       home: GenialWizard(
-        keys: showCaseGlobalKeys,
-        autoPlay: true,
+        keys: GenialShowCaseKeys.myKeys,
+        autoPlay: false,
+        onFinishWizard: () {},
         child: const MainPage(),
       ),
     );

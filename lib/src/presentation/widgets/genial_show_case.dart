@@ -9,8 +9,7 @@ import 'package:showcaseview/showcaseview.dart';
 
 class GenialShowCase extends StatefulWidget {
   /// Constructor of [GenialShowCase]
-  const GenialShowCase({
-    super.key,
+  const GenialShowCase._({
     required this.heightFromWidget,
     required this.widthFromWidget,
     required this.toolTipMessage,
@@ -18,7 +17,7 @@ class GenialShowCase extends StatefulWidget {
     required this.childKey,
     this.movingAnimationDuration = Duration.zero,
     required this.direction,
-    this.toolTipBorderRadius = const Radius.circular(10),
+    required this.toolTipBorderRadius,
   });
 
   final double heightFromWidget;
@@ -29,6 +28,25 @@ class GenialShowCase extends StatefulWidget {
   final Duration movingAnimationDuration;
   final GenialShowCaseToolTipDirection direction;
   final Radius toolTipBorderRadius;
+
+  factory GenialShowCase.build({
+    required double heightFromWidget,
+    required double widthFromWidget,
+    required String toolTipMessage,
+    required Widget child,
+    required GlobalKey childKey,
+    required GenialShowCaseToolTipDirection direction,
+  }) =>
+      GenialShowCase._(
+        heightFromWidget: heightFromWidget,
+        widthFromWidget: widthFromWidget,
+        toolTipMessage: toolTipMessage,
+        childKey: childKey,
+        direction: direction,
+        movingAnimationDuration: Duration.zero,
+        toolTipBorderRadius: const Radius.circular(10),
+        child: child,
+      );
 
   @override
   State<GenialShowCase> createState() => _GenialShowCaseState();
